@@ -787,16 +787,20 @@
 			// get memory bank offset and start of voice bank
 				const voiceBankId = getVoiceBankSlection();
 				let bankOffset = 0x200000;
+				let bankCount = 100;
 				switch (voiceBankId)
 				{
 					case "rbBank1":
 						bankOffset = 0x100000;
+						bankCount = 100;
 						break;
 					case "rbBank2":
 						bankOffset = 0x200000;
+						bankCount = 110;
 						break;
 					case "rbBank3":
 						bankOffset = 0x300000;
+						bankCount = 111;
 						break;
 					default:
 						break;
@@ -811,6 +815,8 @@
 				updateTextArea(`Downloading voice pack:\n`);
 				const voicePackFile = document.getElementById("voiceFile").files[0];
 				await processVoicePack(voicePackFile, bankOffset);
+				await deviceInterface.writeVoiceBankCount(bankCount);
+				updateTextArea(`Download of voice bank complete\n`);
 			}
 			else
 			{
