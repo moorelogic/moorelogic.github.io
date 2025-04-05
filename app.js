@@ -470,19 +470,19 @@
 		/**
 		 * Erase voice bank
 		 */
-		async eraseVoiceBank(memOffset)
+		async eraseVoiceBank(bankOffset)
 		{
 		// Clear protection
 			await this.writeCommandPacket(this.CMD_EEPROM_CLEAR_PROTECTION, 0, 0, 0, null);
 
-			let add = memOffset;
+			let addPtr = bankOffset;
 
 		// Voice bank = 0x100000 bytes, blocks are 0x10000, so 0x10 blocks to erase
 			for (let i = 0; i < 0x10; i++)
 			{
-				const { highAdd, midAdd, lowAdd } = this.getAddressBytes(add);
+				const { highAdd, midAdd, lowAdd } = this.getAddressBytes(addPtr);
 				await this.writeCommandPacket(this.CMD_ERASE_EEPROM_BLOCK, highAdd, midAdd, lowAdd, null);
-				add += 0x10000; // Increment to next 64K block
+				addPtr += 0x10000; // Increment to next 64K block
 			}
 		}
 
@@ -544,7 +544,7 @@
 		/**
 		 * Write voice file to device
 		 */
-		async writeVoiceFile(file, add)
+		async writeVoiceFile(file, addPtr) // file object
 		{
 			try
 			{
@@ -566,16 +566,16 @@
 				let fileIndex = 0;
 				for (let i = 0; i < blockCount; i++)
 				{
-				// Load 32 bytes of data into each block
+				// Load 32 bytes of file data into each block
 					for (let j = 0; j < 32; j++)
 					{
 						fullBlock[j] = fileData[fileIndex++];
 					}
 
 				// Write 32 byte block into external flash starting at address
-					const { highAdd, midAdd, lowAdd } = this.getAddressBytes(add);
+					const { highAdd, midAdd, lowAdd } = this.getAddressBytes(addPtr);
 					await this.writeCommandPacket(this.CMD_WRITE_EEPROM_PAGE, highAdd, midAdd, lowAdd, fullBlock);
-					add += 32; // Increment address one data block
+					addPtr += 32; // Increment address one data block
 				}
 
 			// Write remainder of bytes to external flash
@@ -588,7 +588,7 @@
 						partialBlock[i] = fileData[fileIndex++];
 					}
 
-					const { highAdd, midAdd, lowAdd } = this.getAddressBytes(add);
+					const { highAdd, midAdd, lowAdd } = this.getAddressBytes(addPtr);
 					await this.writeCommandPacket(this.CMD_WRITE_EEPROM_PAGE, highAdd, midAdd, lowAdd, partialBlock);
 				}
 
@@ -602,7 +602,24 @@
 		}
 	}
 
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+
 	const deviceInterface = new PicUsbInterface();
+
+	function updateTextArea(messageText)
+	{
+		const textArea = document.querySelector("textarea");
+		textArea.value += messageText;
+		textArea.scrollTop = textArea.scrollHeight;
+	}
+
+	function clearTextArea()
+	{
+		const textArea = document.querySelector("textarea");
+		textArea.value = "";
+	}
 
 	// Updates the file name in the firmware text box and adds it to the textarea
 	const firmwareInput = document.getElementById('firmwareFile');
@@ -612,7 +629,6 @@
 	{
 		const fileInput = document.getElementById('firmwareFile');
 		const fileNameInput = document.getElementById('firmwareFileName');
-		const textArea = document.querySelector("textarea");
 		const checkbox = document.getElementById("cbFirmware");
 
 		// Update the text box with the selected file name
@@ -621,7 +637,7 @@
 		// Add the file name to the textarea
 		if (fileInput.files.length > 0)
 		{
-			textArea.value += `Using firmware: ${fileInput.files[0].name}\n`;
+			updateTextArea(`Using firmware: ${fileInput.files[0].name}\n`);
 			checkbox.checked = true;
 		}
 	}
@@ -634,7 +650,6 @@
 	{
 		const fileInput = document.getElementById('voiceFile');
 		const fileNameInput = document.getElementById('voiceFileName');
-		const textArea = document.querySelector("textarea");
 		const checkbox = document.getElementById("cbVoice");
 		const radioInput = document.getElementById("rbBank2");
 
@@ -644,7 +659,7 @@
 		// Add the file name to the textarea
 		if (fileInput.files.length > 0)
 		{
-			textArea.value += `Voice: ${fileInput.files[0].name}\n`;
+			updateTextArea(`Using voice pack: ${fileInput.files[0].name}\n`);
 			checkbox.checked = true;
 			radioInput.checked = true;
 		}
@@ -653,12 +668,6 @@
 	// Clears the text area content
 	const clearButton = document.querySelector(".clear-button");
 	clearButton.addEventListener('click', clearTextArea);
-
-	function clearTextArea()
-	{
-		const textArea = document.querySelector("textarea");
-		textArea.value = "";
-	}
 
 	// connect and open HID device
 	async function connectDevice()
@@ -686,15 +695,60 @@
 	// close HID device
 	async function disconnectDevice()
 	{
-		const textArea = document.querySelector("textarea");
 		const deviceDisconnected = await deviceInterface.closeDevice();
 		if (deviceDisconnected)
 		{
-			textArea.value += `Device disconnected\n`;
+			updateTextArea(`Device disconnected\n`);
 		}
 		else
 		{
-			textArea.value += `Device failed to disconnect\n`;
+			updateTextArea(`Device failed to disconnect\n`);
+		}
+	}
+
+	function getVoiceBankSlection()
+	{
+		const radioSet = document.getElementsByName('voiceBank');
+		for (const radio of radioSet)
+		{
+			if (radio.checked)
+			{
+				return radio.id;
+			}
+		}
+
+		return null;
+	}
+
+	// loads the entire voice pack into external EEPROM
+	async function processVoicePack(voicePackFile, bankOffset) // file object
+	{
+		try
+		{
+			const xmlText  = await voicePackFile.text();
+			const parser = new DOMParser();
+      		const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+			let addPtr = bankOffset + 0x400; // memory bank offset + map area
+
+      		const phrases = xmlDoc.getElementsByTagName("phrase");
+			for (let i = 0; i < phrases.length; i++)
+			{
+				const index = phrases[i].querySelector("index").textContent;
+				const fileName = phrases[i].querySelector("file").textContent;
+				const filePath = "female_voice/" + fileName;
+				updateTextArea(`Writing file ${i + 1} of ${phrases.length}...`);
+				const startAdd = addPtr;
+				addPtr += await deviceInterface.writeVoiceFile(filePath, addPtr);
+				const endAdd = addPtr - 1;
+				await deviceInterface.writeVoiceMapEntry(index, startAdd, endAdd, bankOffset); // map entries start at bank offset
+				updateTextArea(`completed\n`);
+			}
+			return;
+		}
+		catch (error)
+		{
+			console.error("Error loading voice records:", error);
+			return [];
 		}
 	}
 
@@ -704,38 +758,62 @@
 
 	async function programDevice()
 	{
-		const textArea = document.querySelector("textarea");
-		const file = document.getElementById("firmwareFile").files[0];
-		const fileNameInput = document.getElementById('firmwareFileName');
 		const firmwareCheckbox = document.getElementById("cbFirmware");
 		const voiceCheckbox = document.getElementById("cbVoice");
-		document.getElementById('btnDownload').disabled = true;
 
 		await connectDevice();
 		if (deviceInterface.deviceDetected)
 		{
+			document.getElementById('btnDownload').disabled = true;
 			await deviceInterface.writeMode(PROG_MODE);
 
 		// program firmware
 			if (firmwareCheckbox.checked)
 			{
 			// program the device and update status
-				textArea.value += `Downloading firmware...`;
-				await deviceInterface.writeImage(file);
-				textArea.value += `completed\n`;
+				updateTextArea(`Downloading firmware...`);
+				const firmwareFile = document.getElementById("firmwareFile").files[0];
+				await deviceInterface.writeImage(firmwareFile);
+				updateTextArea(`completed\n`);
 			}
 			else
 			{
-				textArea.value += `Skipping firmware download\n`;
+				updateTextArea(`Skipping firmware download\n`);
 			}
 
-		// program voice set
 			if (voiceCheckbox.checked)
 			{
+			// get memory bank offset and start of voice bank
+				const voiceBankId = getVoiceBankSlection();
+				let bankOffset = 0x200000;
+				switch (voiceBankId)
+				{
+					case "rbBank1":
+						bankOffset = 0x100000;
+						break;
+					case "rbBank2":
+						bankOffset = 0x200000;
+						break;
+					case "rbBank3":
+						bankOffset = 0x300000;
+						break;
+					default:
+						break;
+				}
+
+			// erasing voice bank before writing is required
+				updateTextArea(`Erasing voice bank...`);
+				await deviceInterface.eraseVoiceBank(bankOffset);
+				updateTextArea(`completed\n`);
+
+			// program entire voice pack in external EEPROM
+				updateTextArea(`Downloading voice pack:\n`);
+				const voicePackFile = document.getElementById("voiceFile").files[0];
+				await processVoicePack(voicePackFile, bankOffset);
 			}
 			else
 			{
-				textArea.value += `Skipping voice download\n`;
+				updateTextArea(`Skipping voice download\n`);
 			}
 		}
 
