@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <voiceset>
+	<path>female_voice/</path>
 	<phraseCount>123</phraseCount>
 	<phrase>
 		<index>0</index>

@@ -730,12 +730,13 @@
       		const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 			let addPtr = bankOffset + 0x400; // memory bank offset + map area
 
-      		const phrases = xmlDoc.getElementsByTagName("phrase");
+      		const path = xmlDoc.getElementsByTagName("path");
+			const phrases = xmlDoc.getElementsByTagName("phrase");
 			for (let i = 0; i < phrases.length; i++)
 			{
 				const index = phrases[i].querySelector("index").textContent;
 				const fileName = phrases[i].querySelector("file").textContent;
-				const filePath = "female_voice/" + fileName;
+				const filePath = path + fileName;
 				updateTextArea(`Writing file ${i + 1} of ${phrases.length}...`);
 				const startAdd = addPtr;
 				addPtr += await deviceInterface.writeVoiceFile(filePath, addPtr);
