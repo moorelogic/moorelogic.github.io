@@ -730,7 +730,7 @@
       		const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 			let addPtr = bankOffset + 0x400; // memory bank offset + map area
 
-      		const path = xmlDocquerySelector("path").textContent;;
+      		const path = xmlDoc.querySelector("path").textContent;;
 			const phrases = xmlDoc.getElementsByTagName("phrase");
 			for (let i = 0; i < phrases.length; i++)
 			{
