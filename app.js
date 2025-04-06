@@ -297,11 +297,16 @@
 		/**
 		 * Load records from a file
 		 */
-		async loadRecordSet(file) // file object
+		async loadRecordSet(firmwareFile)
 		{
 			try
 			{
-				const text = await file.text();
+				const response = await fetch(firmwareFile);
+				if (!response.ok)
+				{
+					throw new Error(`Failed to fetch file: ${response.statusText}`);
+				}
+				const text = await response.text();
 
 			// Split on newline and process lines
 				let rawSet = text.split('\n');
@@ -544,12 +549,12 @@
 		/**
 		 * Write voice file to device
 		 */
-		async writeVoiceFile(file, addPtr) // file object
+		async writeVoiceFile(voiceFile, addPtr) // file object
 		{
 			try
 			{
 			// Fetch binary audio file
-				const response = await fetch(file);
+				const response = await fetch(voiceFile);
 				if (!response.ok)
 				{
 					throw new Error(`Failed to fetch file: ${response.statusText}`);
@@ -615,6 +620,10 @@
 		textArea.scrollTop = textArea.scrollHeight;
 	}
 
+	// Clears the text area content
+	const clearButton = document.querySelector(".clear-button");
+	clearButton.addEventListener('click', clearTextArea);
+
 	function clearTextArea()
 	{
 		const textArea = document.querySelector("textarea");
@@ -622,73 +631,60 @@
 	}
 
 	// Updates the file name in the firmware text box and adds it to the textarea
-	const firmwareInput = document.getElementById('firmwareFile');
-	firmwareInput.addEventListener('change', updateFirmwareFileName);
+	const firmwareSelect = document.getElementById('ddFirmware');
+	firmwareSelect.addEventListener('change', updateFirmwareFileName);
 
 	function updateFirmwareFileName()
 	{
-		const fileInput = document.getElementById('firmwareFile');
-		const fileNameInput = document.getElementById('firmwareFileName');
-		const checkbox = document.getElementById("cbFirmware");
-
-		// Update the text box with the selected file name
-		fileNameInput.value = fileInput.files.length > 0 ? fileInput.files[0].name : '';
-
-		// Add the file name to the textarea
-		if (fileInput.files.length > 0)
+		const firmwareSelect= document.getElementById('ddFirmware');
+		if (firmwareSelect.selectedIndex === 0)
 		{
-			updateTextArea(`Using firmware: ${fileInput.files[0].name}\n`);
-			checkbox.checked = true;
+			return;
 		}
+		const firmwareFileName = firmwareSelect.options[firmwareSelect.selectedIndex].text;
+		const checkbox = document.getElementById("cbFirmware");
+		checkbox.checked = true;
+		updateTextArea(`Using firmware: ${firmwareFileName}\n`);
 	}
 
 	// Updates the file name in the voice select text box and adds it to the textarea
-	const voiceInput = document.getElementById('voiceFile');
-	voiceInput.addEventListener('change', updateVoiceFileName);
+	const voicePackSelect = document.getElementById('ddVoicePack');
+	voicePackSelect.addEventListener('change', updateVoiceFileName);
 
 	function updateVoiceFileName()
 	{
-		const fileInput = document.getElementById('voiceFile');
-		const fileNameInput = document.getElementById('voiceFileName');
+		const voicePackSelect = document.getElementById('ddVoicePack');
+		if (voicePackSelect.selectedIndex === 0)
+		{
+			return;
+		}
+		const voicePackFileName = voicePackSelect.options[voicePackSelect.selectedIndex].text;
 		const checkbox = document.getElementById("cbVoice");
 		const radioInput = document.getElementById("rbBank2");
-
-		// Update the text box with the selected file name
-		fileNameInput.value = fileInput.files.length > 0 ? fileInput.files[0].name : '';
-
-		// Add the file name to the textarea
-		if (fileInput.files.length > 0)
-		{
-			updateTextArea(`Using voice pack: ${fileInput.files[0].name}\n`);
-			checkbox.checked = true;
-			radioInput.checked = true;
-		}
+		updateTextArea(`Using voice pack ${voicePackFileName}\n`);
+		checkbox.checked = true;
+		radioInput.checked = true;
 	}
-
-	// Clears the text area content
-	const clearButton = document.querySelector(".clear-button");
-	clearButton.addEventListener('click', clearTextArea);
 
 	// connect and open HID device
 	async function connectDevice()
 	{
-		const textArea = document.querySelector("textarea");
 		const deviceConnected = await deviceInterface.requestDevice();
 		if (deviceConnected)
 		{
 			const deviceOpened = await deviceInterface.openDevice();
 			if (deviceOpened)
 			{
-				textArea.value += `Device connected\n`;
+				updateTextArea(`Device connected\n`);
 			}
 			else
 			{
-				textArea.value += `Device failed to connect\n`;
+				updateTextArea(`Device failed to connect\n`);
 			}
 		}
 		else
 		{
-			textArea.value += `Device failed to connect\n`;
+			updateTextArea(`Device failed to connect\n`);
 		}
 	}
 
@@ -721,11 +717,16 @@
 	}
 
 	// loads the entire voice pack into external EEPROM
-	async function processVoicePack(voicePackFile, bankOffset) // file object
+	async function processVoicePack(voicePackFile, bankOffset)
 	{
 		try
 		{
-			const xmlText  = await voicePackFile.text();
+			const response = await fetch(voicePackFile);
+			if (!response.ok)
+			{
+				throw new Error(`Failed to fetch file: ${response.statusText}`);
+			}
+			const xmlText = await response.text();
 			const parser = new DOMParser();
       		const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 			let addPtr = bankOffset + 0x400; // memory bank offset + map area
@@ -772,9 +773,20 @@
 			if (firmwareCheckbox.checked)
 			{
 			// program the device and update status
+				const firmwareSelect= document.getElementById('ddFirmware');
+				if (firmwareSelect.selectedIndex === 0)
+				{
+				// do cleanup and exit
+					document.getElementById('btnDownload').disabled = false;
+					await deviceInterface.writeMode(RUN_MODE);
+					updateTextArea(`No firmware file selected, skipping download\n`);
+					await disconnectDevice();
+					return;
+				}
+				const firmwareFileName = firmwareSelect.options[firmwareSelect.selectedIndex].text;
 				updateTextArea(`Downloading firmware...`);
-				const firmwareFile = document.getElementById("firmwareFile").files[0];
-				await deviceInterface.writeImage(firmwareFile);
+				const firmwarePath = "firmware/" + firmwareFileName;
+				await deviceInterface.writeImage(firmwarePath);
 				updateTextArea(`completed\n`);
 			}
 			else
@@ -813,8 +825,19 @@
 
 			// program entire voice pack in external EEPROM
 				updateTextArea(`Downloading voice pack:\n`);
-				const voicePackFile = document.getElementById("voiceFile").files[0];
-				await processVoicePack(voicePackFile, bankOffset);
+				const voicePackSelect = document.getElementById('ddVoicePack');
+				if (voicePackSelect.selectedIndex === 0)
+				{
+				// do cleanup and exit
+					document.getElementById('btnDownload').disabled = false;
+					await deviceInterface.writeMode(RUN_MODE);
+					updateTextArea(`No voice pack file selected, skipping download\n`);
+					await disconnectDevice();
+					return;
+				}
+				const voicePackFileName = voicePackSelect.options[voicePackSelect.selectedIndex].text;
+				const voicePath = "voice/" + voicePackFileName;
+				await processVoicePack(voicePath, bankOffset);
 				await deviceInterface.writeVoiceBankCount(bankCount);
 				updateTextArea(`Download of voice bank complete\n`);
 			}

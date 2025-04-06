@@ -14,21 +14,23 @@
         <!-- Firmware Selection -->
         <div class="section">
             <h3>Firmware Selection</h3>
-            <div class="input-group">
-                <input type="file" id="firmwareFile" accept=".hex" style="display: none;">
-                <input type="text" id="firmwareFileName" placeholder="Select Firmware File" readonly>
-                <button onclick="document.getElementById('firmwareFile').click()">Browse</button>
-            </div>
+            <select id="ddFirmware" name="firmwareOptions">
+                <option value="option0">Select firmware</option>
+                <option value="option1">Evo_109_utah_airguns.hex</option>
+                <option value="option2">Evo_109_team_centercut.hex</option>
+                <option value="option3">Evo_109_Saber_Tactical.hex</option>
+				<option value="option4">Luxe717_115_English.hex</option>
+            </select>
         </div>
 
         <!-- Voice Selection -->
         <div class="section">
-            <h3>Voice Selection</h3>
-            <div class="input-group">
-                <input type="file" id="voiceFile" accept=".xml" style="display: none;">
-                <input type="text" id="voiceFileName" placeholder="Select Voice File" readonly>
-                <button onclick="document.getElementById('voiceFile').click()">Browse</button>
-            </div>
+            <h3>Firmware Selection</h3>
+            <select id="ddVoicePack" name="voicePackOptions">
+                <option value="option0">Select voice pack</option>
+                <option value="option1">female_voice_evo.xml</option>
+                <option value="option1">female_voice_luxe.xml</option>
+            </select>
             <div class="radio-group">
                 <input type="radio" name="voiceBank" id="rbBank1">
                 <label for="rbBank1">Bank 1</label>
