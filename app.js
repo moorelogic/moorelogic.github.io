@@ -661,7 +661,7 @@
 		const voicePackFileName = voicePackSelect.options[voicePackSelect.selectedIndex].text;
 		const checkbox = document.getElementById("cbVoice");
 		const radioInput = document.getElementById("rbBank2");
-		updateTextArea(`Using voice pack ${voicePackFileName}\n`);
+		updateTextArea(`Using voice pack: ${voicePackFileName}\n`);
 		checkbox.checked = true;
 		radioInput.checked = true;
 	}
