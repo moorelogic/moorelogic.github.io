@@ -839,7 +839,7 @@
 				const voicePath = "voice/" + voicePackFileName;
 				await processVoicePack(voicePath, bankOffset);
 				await deviceInterface.writeVoiceBankCount(bankCount);
-				updateTextArea(`Download of voice bank complete\n`);
+				updateTextArea(`Download of voice pack complete\n`);
 			}
 			else
 			{
