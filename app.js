@@ -610,8 +610,46 @@
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-
 	const deviceInterface = new PicUsbInterface();
+
+	
+	document.addEventListener('DOMContentLoaded', populateDownloads);
+
+	async function populateDownloads()
+	{
+		const response = await fetch("config.xml");
+		if (!response.ok)
+		{
+			throw new Error(`Failed to fetch file: ${response.statusText}`);
+		}
+		const xmlText = await response.text();
+		const parser = new DOMParser();
+		const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+
+		let group = xmlDoc.getElementsByTagName("firmware");
+		let fileList = group[0].getElementsByTagName("file");
+		let options = Array.from(fileList);
+		let select = document.getElementById('ddFirmware');
+		for (let i = 0; i < options.length; i++)
+		{
+			const option = document.createElement("option");
+			option.value = "option" + (i + 1);
+			option.text = options[i].textContent;
+			select.appendChild(option);
+		}
+
+		group = xmlDoc.getElementsByTagName("voice");
+		fileList = group[0].getElementsByTagName("file");
+		options = Array.from(fileList);
+		select = document.getElementById('ddVoicePack');
+		for (let i = 0; i < options.length; i++)
+		{
+			const option = document.createElement("option");
+			option.value = "option" + (i + 1);
+			option.text = options[i].textContent;
+			select.appendChild(option);
+		}
+	}
 
 	function updateTextArea(messageText)
 	{
