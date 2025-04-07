@@ -220,8 +220,16 @@
 				}
 			}
 
-			await this.writeDataPacket();
-			await this.readDataPacket();
+			try
+			{
+				await this.writeDataPacket();
+				await this.readDataPacket();
+			}
+			catch(error)
+			{
+				console.error("Error writing data packet:", error);
+				return false;
+			}
 			
 			if (this.packet[0] === this.CMD_ACK)
 			{
@@ -375,11 +383,18 @@
 			}
 			else
 			{
-				recordSet = await this.loadRecordSet(firmwareFile);
+				try
+				{
+					recordSet = await this.loadRecordSet(firmwareFile);
+				}
+				catch (error)
+				{
+					console.error("Error loading record set:", error);
+					return [];
+				}
 			}
 
 			const hexSet = [];
-
 			for (let i = 0; i < recordSet.length; i++)
 			{
 				hexSet.push(this.parseRecord(recordSet[i]));
@@ -393,9 +408,19 @@
 		 */
 		async writeImage(firmwareFile)
 		{
-			const hexSet = await this.parseFile(firmwareFile);
 			const hexQueue = [];
 			const hexImage = new Uint8Array(this.IMAGE_SIZE);
+
+			try
+			{
+				const hexSet = await this.parseFile(firmwareFile);
+			}
+			catch (error)
+			{
+				console.error("Error parsing hex file:", error);
+				return false;
+			}
+
 
 			// Filter array for only memory data
 			for (const hexData of hexSet)
@@ -478,7 +503,15 @@
 		async eraseVoiceBank(bankOffset)
 		{
 		// Clear protection
-			await this.writeCommandPacket(this.CMD_EEPROM_CLEAR_PROTECTION, 0, 0, 0, null);
+			try
+			{
+				await this.writeCommandPacket(this.CMD_EEPROM_CLEAR_PROTECTION, 0, 0, 0, null);
+			}
+			catch (error)
+			{
+				console.error("Error clearing EEPROM protection:", error);
+				return false;	
+			}
 
 			let addPtr = bankOffset;
 
@@ -486,7 +519,17 @@
 			for (let i = 0; i < 0x10; i++)
 			{
 				const { highAdd, midAdd, lowAdd } = this.getAddressBytes(addPtr);
-				await this.writeCommandPacket(this.CMD_ERASE_EEPROM_BLOCK, highAdd, midAdd, lowAdd, null);
+				
+				try
+				{
+					await this.writeCommandPacket(this.CMD_ERASE_EEPROM_BLOCK, highAdd, midAdd, lowAdd, null);
+				}
+				catch (error)
+				{
+					console.error("Error erasing EEPROM block:", error);
+					return false;
+				}
+
 				addPtr += 0x10000; // Increment to next 64K block
 			}
 		}
@@ -500,24 +543,32 @@
 			const configBlock2 = new Uint8Array(32);
 
 		// Read in both configuration blocks to preserve settings
-			await this.writeCommandPacket(this.CMD_READ_EEPROM_PAGE, 0x00, 0x00, 0x00, configBlock1);
-			for (let i = 0; i < 32; i++)
+			try
 			{
-				configBlock1[i] = this.packet[i + 5];
-			}
-			configBlock1[31] = count; // Update last parameter parNumVoiceBanks parameter to count value
+				await this.writeCommandPacket(this.CMD_READ_EEPROM_PAGE, 0x00, 0x00, 0x00, configBlock1);
+				for (let i = 0; i < 32; i++)
+				{
+					configBlock1[i] = this.packet[i + 5];
+				}
+				configBlock1[31] = count; // Update last parameter parNumVoiceBanks parameter to count value
 
-			await this.writeCommandPacket(this.CMD_READ_EEPROM_PAGE, 0x00, 0x00, 0x20, configBlock2);
-			for (let i = 0; i < 32; i++)
-			{
-				configBlock2[i] = this.packet[i + 5];
-			}
+				await this.writeCommandPacket(this.CMD_READ_EEPROM_PAGE, 0x00, 0x00, 0x20, configBlock2);
+				for (let i = 0; i < 32; i++)
+				{
+					configBlock2[i] = this.packet[i + 5];
+				}
 
 		// Erase EEPROM sector and write back updated configuration blocks
-			await this.writeCommandPacket(this.CMD_EEPROM_CLEAR_PROTECTION, 0, 0, 0, null);
-			await this.writeCommandPacket(this.CMD_ERASE_EEPROM_BLOCK, 0, 0, 0, null);
-			await this.writeCommandPacket(this.CMD_WRITE_EEPROM_PAGE, 0x00, 0x00, 0x00, configBlock1);
-			await this.writeCommandPacket(this.CMD_WRITE_EEPROM_PAGE, 0x00, 0x00, 0x20, configBlock2);
+				await this.writeCommandPacket(this.CMD_EEPROM_CLEAR_PROTECTION, 0, 0, 0, null);
+				await this.writeCommandPacket(this.CMD_ERASE_EEPROM_BLOCK, 0, 0, 0, null);
+				await this.writeCommandPacket(this.CMD_WRITE_EEPROM_PAGE, 0x00, 0x00, 0x00, configBlock1);
+				await this.writeCommandPacket(this.CMD_WRITE_EEPROM_PAGE, 0x00, 0x00, 0x20, configBlock2);
+			}
+			catch (error)
+			{	
+				console.error("Error writing voice bank count:", error);
+				return false;
+			}
 		}
 
 		/**
@@ -543,7 +594,15 @@
 
 		// Map index address
 			({ highAdd, midAdd, lowAdd } = this.getAddressBytes(mapPtr));
-			await this.writeCommandPacket(this.CMD_WRITE_EEPROM_PAGE, highAdd, midAdd, lowAdd, dataBlock);
+			try
+			{
+				await this.writeCommandPacket(this.CMD_WRITE_EEPROM_PAGE, highAdd, midAdd, lowAdd, dataBlock);	
+			}
+			catch (error)
+			{
+				console.error("Error writing voice map entry:", error);
+				return false;
+			}
 		}
 
 		/**
@@ -707,37 +766,53 @@
 	// connect and open HID device
 	async function connectDevice()
 	{
-		const deviceConnected = await deviceInterface.requestDevice();
-		if (deviceConnected)
+		try
 		{
-			const deviceOpened = await deviceInterface.openDevice();
-			if (deviceOpened)
+			const deviceConnected = await deviceInterface.requestDevice();
+			if (deviceConnected)
 			{
-				updateTextArea(`Device connected\n`);
+				const deviceOpened = await deviceInterface.openDevice();
+				if (deviceOpened)
+				{
+					updateTextArea(`Device connected\n`);
+				}
+				else
+				{
+					updateTextArea(`Device failed to connect\n`);
+				}
 			}
 			else
 			{
 				updateTextArea(`Device failed to connect\n`);
 			}
 		}
-		else
+		catch (error)
 		{
+			console.error("Error connecting to device:", error);
 			updateTextArea(`Device failed to connect\n`);
-		}
+		}	
 	}
 
 	// close HID device
 	async function disconnectDevice()
 	{
-		const deviceDisconnected = await deviceInterface.closeDevice();
-		if (deviceDisconnected)
+		try
 		{
-			updateTextArea(`Device disconnected\n`);
+			const deviceDisconnected = await deviceInterface.closeDevice();
+			if (deviceDisconnected)
+			{
+				updateTextArea(`Device disconnected\n`);
+			}
+			else
+			{
+				updateTextArea(`Device failed to disconnect\n`);
+			}
 		}
-		else
+		catch (error)
 		{
+			console.error("Error disconnecting from device:", error);
 			updateTextArea(`Device failed to disconnect\n`);
-		}
+		}	
 	}
 
 	function getVoiceBankSlection()
@@ -801,91 +876,101 @@
 		const firmwareCheckbox = document.getElementById("cbFirmware");
 		const voiceCheckbox = document.getElementById("cbVoice");
 
-		await connectDevice();
-		if (deviceInterface.deviceDetected)
+		try
 		{
-			document.getElementById('btnDownload').disabled = true;
-			await deviceInterface.writeMode(PROG_MODE);
-
-		// program firmware
-			if (firmwareCheckbox.checked)
+			await connectDevice();
+			if (deviceInterface.deviceDetected)
 			{
-			// program the device and update status
-				const firmwareSelect= document.getElementById('ddFirmware');
-				if (firmwareSelect.selectedIndex === 0)
+				document.getElementById('btnDownload').disabled = true;
+				await deviceInterface.writeMode(PROG_MODE);
+
+			// program firmware
+				if (firmwareCheckbox.checked)
 				{
-				// do cleanup and exit
-					document.getElementById('btnDownload').disabled = false;
-					await deviceInterface.writeMode(RUN_MODE);
-					updateTextArea(`No firmware file selected, skipping download\n`);
-					await disconnectDevice();
-					return;
+				// program the device and update status
+					const firmwareSelect= document.getElementById('ddFirmware');
+					if (firmwareSelect.selectedIndex === 0)
+					{
+					// do cleanup and exit
+						document.getElementById('btnDownload').disabled = false;
+						await deviceInterface.writeMode(RUN_MODE);
+						updateTextArea(`No firmware file selected, skipping download\n`);
+						await disconnectDevice();
+						return;
+					}
+					const firmwareFileName = firmwareSelect.options[firmwareSelect.selectedIndex].text;
+					updateTextArea(`Downloading firmware...`);
+					const firmwarePath = "firmware/" + firmwareFileName;
+					await deviceInterface.writeImage(firmwarePath);
+					updateTextArea(`completed\n`);
 				}
-				const firmwareFileName = firmwareSelect.options[firmwareSelect.selectedIndex].text;
-				updateTextArea(`Downloading firmware...`);
-				const firmwarePath = "firmware/" + firmwareFileName;
-				await deviceInterface.writeImage(firmwarePath);
-				updateTextArea(`completed\n`);
-			}
-			else
-			{
-				updateTextArea(`Skipping firmware download\n`);
-			}
-
-			if (voiceCheckbox.checked)
-			{
-			// get memory bank offset and start of voice bank
-				const voiceBankId = getVoiceBankSlection();
-				let bankOffset = 0x200000;
-				let bankCount = 100;
-				switch (voiceBankId)
+				else
 				{
-					case "rbBank1":
-						bankOffset = 0x100000;
-						bankCount = 100;
-						break;
-					case "rbBank2":
-						bankOffset = 0x200000;
-						bankCount = 110;
-						break;
-					case "rbBank3":
-						bankOffset = 0x300000;
-						bankCount = 111;
-						break;
-					default:
-						break;
+					updateTextArea(`Skipping firmware download\n`);
 				}
 
-			// erasing voice bank before writing is required
-				updateTextArea(`Erasing voice bank...`);
-				await deviceInterface.eraseVoiceBank(bankOffset);
-				updateTextArea(`completed\n`);
-
-			// program entire voice pack in external EEPROM
-				updateTextArea(`Downloading voice pack:\n`);
-				const voicePackSelect = document.getElementById('ddVoicePack');
-				if (voicePackSelect.selectedIndex === 0)
+				if (voiceCheckbox.checked)
 				{
-				// do cleanup and exit
-					document.getElementById('btnDownload').disabled = false;
-					await deviceInterface.writeMode(RUN_MODE);
-					updateTextArea(`No voice pack file selected, skipping download\n`);
-					await disconnectDevice();
-					return;
+				// get memory bank offset and start of voice bank
+					const voiceBankId = getVoiceBankSlection();
+					let bankOffset = 0x200000;
+					let bankCount = 100;
+					switch (voiceBankId)
+					{
+						case "rbBank1":
+							bankOffset = 0x100000;
+							bankCount = 100;
+							break;
+						case "rbBank2":
+							bankOffset = 0x200000;
+							bankCount = 110;
+							break;
+						case "rbBank3":
+							bankOffset = 0x300000;
+							bankCount = 111;
+							break;
+						default:
+							break;
+					}
+
+				// erasing voice bank before writing is required
+					updateTextArea(`Erasing voice bank...`);
+					await deviceInterface.eraseVoiceBank(bankOffset);
+					updateTextArea(`completed\n`);
+
+				// program entire voice pack in external EEPROM
+					updateTextArea(`Downloading voice pack:\n`);
+					const voicePackSelect = document.getElementById('ddVoicePack');
+					if (voicePackSelect.selectedIndex === 0)
+					{
+					// do cleanup and exit
+						document.getElementById('btnDownload').disabled = false;
+						await deviceInterface.writeMode(RUN_MODE);
+						updateTextArea(`No voice pack file selected, skipping download\n`);
+						await disconnectDevice();
+						return;
+					}
+					const voicePackFileName = voicePackSelect.options[voicePackSelect.selectedIndex].text;
+					const voicePath = "voice/" + voicePackFileName;
+					await processVoicePack(voicePath, bankOffset);
+					await deviceInterface.writeVoiceBankCount(bankCount);
+					updateTextArea(`Download of voice pack complete\n`);
 				}
-				const voicePackFileName = voicePackSelect.options[voicePackSelect.selectedIndex].text;
-				const voicePath = "voice/" + voicePackFileName;
-				await processVoicePack(voicePath, bankOffset);
-				await deviceInterface.writeVoiceBankCount(bankCount);
-				updateTextArea(`Download of voice pack complete\n`);
+				else
+				{
+					updateTextArea(`Skipping voice download\n`);
+				}
 			}
-			else
-			{
-				updateTextArea(`Skipping voice download\n`);
-			}
+
+			await deviceInterface.writeMode(RUN_MODE);
+			await disconnectDevice();
+			document.getElementById('btnDownload').disabled = false;
 		}
-
-		await deviceInterface.writeMode(RUN_MODE);
-		await disconnectDevice();
-		document.getElementById('btnDownload').disabled = false;
+		catch (error)
+		{
+			console.error("Error programming device:", error);
+			updateTextArea(`Device failed to program\n`);
+			await disconnectDevice();
+			document.getElementById('btnDownload').disabled = false;
+		}	
 	}
