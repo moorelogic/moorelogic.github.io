@@ -410,7 +410,7 @@
 		{
 			const hexQueue = [];
 			const hexImage = new Uint8Array(this.IMAGE_SIZE);
-			const hexSet = [];
+			let hexSet = [];
 
 			try
 			{
