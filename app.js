@@ -192,9 +192,19 @@
 			}
 			catch (error)
 			{
-				console.error("Error writing data packet:", error);
-				return false;
-			}
+				console.error("First pass Error writing data packet:", error);
+
+			// do over
+				try
+				{
+					await this.device.sendReport(0, this.packet);
+					return true;
+				}
+				catch (error)
+				{
+					console.error("Second pass error writing data packet:", error);
+					return false;
+				}
 		}
 
 		/**
