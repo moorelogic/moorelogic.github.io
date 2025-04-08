@@ -410,10 +410,11 @@
 		{
 			const hexQueue = [];
 			const hexImage = new Uint8Array(this.IMAGE_SIZE);
+			const hexSet = [];
 
 			try
 			{
-				const hexSet = await this.parseFile(firmwareFile);
+				hexSet = await this.parseFile(firmwareFile);
 			}
 			catch (error)
 			{
