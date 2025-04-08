@@ -205,6 +205,7 @@
 					console.error("Second pass error writing data packet:", error);
 					return false;
 				}
+			}
 		}
 
 		/**
