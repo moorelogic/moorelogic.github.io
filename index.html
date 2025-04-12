@@ -7,57 +7,60 @@
     <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
 </head>
 <body>
-    <div class="container">
+
+    <main class="container">
         <!-- Title Bar -->
-        <div class="title-bar">Evo USB Web Interface Version 1.02</div>
+        <header class="title-bar">Evo USB Web Interface Version 1.03</header>
 
         <!-- Firmware Selection -->
-        <div class="section">
+        <section class="section">
             <h3>Firmware Selection</h3>
             <select id="ddFirmware" name="firmwareOptions">
-                <option value="option0">Select firmware</option>
+                <option value="">Select firmware</option> <!-- Empty value for placeholder -->
             </select>
-        </div>
+        </section>
 
         <!-- Voice Selection -->
-        <div class="section">
+        <section class="section">
             <h3>Voice Selection</h3>
             <select id="ddVoicePack" name="voicePackOptions">
-                <option value="option0">Select voice pack</option>
+                <option value="">Select voice pack</option> <!-- Empty value for placeholder -->
             </select>
-            <div class="radio-group">
-                <input type="radio" name="voiceBank" id="rbBank1">
-                <label for="rbBank1">Bank 1</label>
-                <input type="radio" name="voiceBank" id="rbBank2">
-                <label for="rbBank2">Bank 2</label>
-                <input type="radio" name="voiceBank" id="rbBank3">
-                <label for="rbBank3">Bank 3</label>
-            </div>
-        </div>
+            <fieldset class="radio-group">
+                 <legend class="visually-hidden">Voice Bank Selection</legend> <!-- Accessible legend -->
+                 <input type="radio" name="voiceBank" id="rbBank1" value="bank1"> <!-- Added value -->
+                 <label for="rbBank1">Bank 1</label>
+                 <input type="radio" name="voiceBank" id="rbBank2" value="bank2"> <!-- Added value -->
+                 <label for="rbBank2">Bank 2</label>
+                 <input type="radio" name="voiceBank" id="rbBank3" value="bank3"> <!-- Added value -->
+                 <label for="rbBank3">Bank 3</label>
+            </fieldset>
+        </section>
 
         <!-- Download Selections -->
-        <div class="section">
+        <section class="section">
             <h3>Download Selection</h3>
             <div>
-                <input type="checkbox" id="cbFirmware">
+                <input type="checkbox" id="cbFirmware" name="downloadFirmware"> <!-- Added name -->
                 <label for="cbFirmware">Firmware</label>
-                <input type="checkbox" id="cbVoice">
+                <input type="checkbox" id="cbVoice" name="downloadVoice"> <!-- Added name -->
                 <label for="cbVoice">Voice</label>
-                <button id="btnDownload">Download</button>
+                <button id="btnDownload" type="button">Download</button> <!-- Added type -->
             </div>
-        </div>
+        </section>
 
         <!-- Programming Status -->
-        <div class="section">
+        <section class="section">
             <h3>Programming Status</h3>
-            <button class="clear-button">Clear</button>
-            <textarea readonly></textarea>
-        </div>
+            <button id="btnClearStatus" class="clear-button" type="button">Clear</button> <!-- Added ID and type -->
+            <textarea id="statusArea" readonly aria-live="polite"></textarea> <!-- Added ID and aria-live -->
+        </section>
 
         <!-- Logo -->
-        <div class="logo">evo</div>
-    
-	<script src='app.js'></script>
-		
+        <footer class="logo">evo</footer> <!-- Changed to footer -->
+    </main>
+
+    <script src='app.js'></script>
+
 </body>
 </html>

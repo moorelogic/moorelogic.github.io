@@ -1,90 +1,185 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: lightgrey; /* Light grey for the page background */
-    color: whitesmoke; /* Text color for better readability */
+/* Allman Style Formatting Applied */
+
+:root
+{
+    --page-bg: lightgrey;
+    --container-bg: black;
+    --text-color: whitesmoke;
+    --text-color-dark: black;
+    --primary-accent: darkgoldenrod;
+    --button-bg: #444;
+    --button-hover-bg: var(--primary-accent);
+    --button-disabled-bg: #cccccc;
+    --button-disabled-color: #666666;
+    --button-disabled-border: #999999;
+    --border-color: #ccc;
+    --input-border-color: #444;
+    --textarea-bg: whitesmoke;
+    --base-font-family: Arial, sans-serif;
+    --border-radius-container: 20px;
+    --border-radius-small: 5px;
+    --padding-standard: 20px;
+    --padding-button: 5px 10px;
 }
 
-.container {
-    width: 400px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    background-color: black; /* Black background for the app interface */
+*, *::before, *::after
+{
+    box-sizing: border-box;
 }
 
-.title-bar {
-    background-color: darkgoldenrod; /* White background for the title bar */
-    color: black; /* Black text for contrast */
+body
+{
+    font-family: var(--base-font-family);
+    margin: var(--padding-standard);
+    background-color: var(--page-bg);
+    color: var(--text-color); /* Global text color */
+}
+
+.container
+{
+    /* Responsive width */
+    max-width: 450px;
+    width: 90%;
+    margin: var(--padding-standard) auto; /* Centering with top/bottom margin */
+    padding: var(--padding-standard);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-container);
+    background-color: var(--container-bg);
+}
+
+.title-bar
+{
+    background-color: var(--primary-accent);
+    color: var(--text-color-dark);
     padding: 15px;
     text-align: center;
     font-weight: bold;
-    border-radius: 10px 10px 0px 0px; /* Rounded corners for the top of the container */
-    margin-top: 0px;
-    margin-bottom: 20px;
-    margin-left: 0px;
-    margin-left: 0px;
+    border-radius: 10px 10px 0 0; /* Combined */
+    /* Adjust margin to align with container padding */
+    margin: calc(-1 * var(--padding-standard)) calc(-1 * var(--padding-standard)) var(--padding-standard);
 }
 
-.section h3 {
-    margin-bottom: 7px; /* Reduces spacing below the title to 10px */
+.section
+{
+    margin-bottom: var(--padding-standard); /* Space between sections */
 }
 
-.section select {
-    width: 300px;
+.section h3
+{
+    margin-top: 0; /* Remove default top margin */
+    margin-bottom: 10px; /* Consistent spacing below heading */
 }
 
-.radio-group {
-    margin: 7.5px 0;
+.section select
+{
+    width: 100%; /* Make selects fill available width */
+    max-width: 300px; /* But limit max width */
+    padding: 5px;
+    border-radius: var(--border-radius-small);
+    margin-bottom: 10px; /* Space below selects */
 }
 
-.input-group {
-    display: flex;
-    align-items: center;
+/* Reset fieldset styles */
+fieldset
+{
+    border: none;
+    padding: 0;
+    margin: 0;
 }
 
-button {
-    background-color: #444; /* Dark grey for buttons */
+.radio-group
+{
+    margin: 10px 0; /* Consistent vertical spacing */
+}
+
+/* Better spacing for radio/checkbox labels */
+.radio-group label,
+.section > div > label /* Target labels directly inside the download section div */
+{
+    margin-right: 15px; /* Space between options */
+    margin-left: 4px;  /* Space between input and its label */
+    vertical-align: middle; /* Align labels better with inputs */
+}
+.radio-group input[type="radio"],
+.section > div > input[type="checkbox"]
+{
+     vertical-align: middle; /* Align inputs better with labels */
+}
+
+
+button
+{
+    background-color: var(--button-bg);
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: var(--padding-button);
     margin-left: 10px;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: var(--border-radius-small);
+    transition: background-color 0.2s ease; /* Smooth hover transition */
+    vertical-align: middle; /* Align with checkboxes/labels */
 }
+/* Target first button in a group if needed */
+/* .section > div > button:first-of-type { margin-left: 0; } */
 
-button:hover {
-    background-color: darkgoldenrod; /* Slightly lighter grey on hover */
+
+button:hover
+{
+    background-color: var(--button-hover-bg);
 }
 
 button:disabled,
-button[disabled]{
-  border: 1px solid #999999;
-  background-color: #cccccc;
-  color: #666666;
+button[disabled]
+{
+  border: 1px solid var(--button-disabled-border);
+  background-color: var(--button-disabled-bg);
+  color: var(--button-disabled-color);
+  cursor: not-allowed; /* Indicate non-interactive state */
 }
 
-.clear-button {
-    margin-bottom: 10px; /* Adds 10px padding below the Clear button */
+.clear-button
+{
+    margin-bottom: 10px; /* Space below Clear button */
+    margin-left: 0; /* Align left */
+    float: right; /* Position to the right */
 }
 
-textarea {
-    width: 94%;
-    height: 100px; /* Fixed height */
-    resize: none; /* Prevent resizing */
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-    font-family: Arial, sans-serif; /* Match the overall font */
-    background-color: whitesmoke; /* Ensure consistency with the dark theme */
-    color: black; /* Text color for readability */
-    border: 1px solid #444; /* Border for clear separation */
-    padding: 10px; /* Padding for better text readability */
+textarea
+{
+    width: 100%; /* Use full available width */
+    height: 120px; /* Slightly taller */
+    resize: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: var(--base-font-family);
+    background-color: var(--textarea-bg);
+    color: var(--text-color-dark);
+    border: 1px solid var(--input-border-color);
+    padding: 10px;
+    border-radius: var(--border-radius-small);
+    margin-top: 5px; /* Space above textarea if clear button floats */
+    clear: both; /* Ensure it clears the floated button */
 }
 
-.logo {
+.logo
+{
     text-align: left;
-    font-style: bold;
-    font-size: 80px;
-    margin-top: 20px;
+    font-weight: bold; /* Correct property */
+    font-size: 4rem; /* Relative unit */
+    margin-top: var(--padding-standard);
+    color: var(--primary-accent); /* Use accent color */
+}
+
+/* Style for visually hidden elements (like legend) */
+.visually-hidden
+{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
