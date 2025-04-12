@@ -13,8 +13,6 @@
 			this.IMAGE_SIZE = 65536;
 			this.VID = 0x1240; // Vendor ID as number for WebHID
 			this.PID = 0xfa7a; // Product ID as number for WebHID
-			this.CRYPT_KEY = "ABCDEFGHIJKLMNOP";
-			this.CRYPT_IV = "ABCDEFGHIJKLMNOP";
 			this.USING_ENCRYPTION = false;
 
 		// Interface commands
@@ -192,19 +190,8 @@
 			}
 			catch (error)
 			{
-				console.error("First pass Error writing data packet:", error);
-
-			// do over
-				try
-				{
-					await this.device.sendReport(0, this.packet);
-					return true;
-				}
-				catch (error)
-				{
-					console.error("Second pass error writing data packet:", error);
-					return false;
-				}
+				console.error("Error writing data packet:", error);
+				return false;
 			}
 		}
 
@@ -249,67 +236,6 @@
 			else
 			{
 				return false;
-			}
-		}
-
-		/**
-		* Decrypt data using Web Crypto API
-		*/
-		async decryptData(encryptedData)
-		{
-			const encoder = new TextEncoder();
-			const keyData = encoder.encode(this.CRYPT_KEY);
-			const ivData = encoder.encode(this.CRYPT_IV);
-			//const ivData = new Uint8Array([ /* 16 bytes of data */ ]);
-
-			const key = await window.crypto.subtle.importKey
-			(
-				'raw',
-				keyData,
-				{ name: 'AES-CBC' },
-				false,
-				['decrypt']
-			);
-
-			const decrypted = await window.crypto.subtle.decrypt
-			(
-				{ name: 'AES-CBC', iv: ivData },
-				key,
-				encryptedData
-			);
-
-			return new TextDecoder().decode(decrypted);
-		}
-
-		/**
-		 * Load encrypted records from a file
-		 */
-		async loadEncryptedRecordSet(file)
-		{
-			try
-			{
-				const response = await fetch(file);
-				const encryptedData = await response.arrayBuffer();
-				const decryptedText = await this.decryptData(encryptedData);
-
-			// Split on carriage return and process lines
-				let rawSet = decryptedText.split('\n');
-				let recordSet = [];
-
-				for (let i = 0; i < rawSet.length; i++)
-				{
-					if (rawSet[i].length > 0 && rawSet[i].substring(0, 1) === ':')
-					{
-						recordSet.push(rawSet[i].substring(1));
-					}
-				}
-
-				return recordSet;
-			}
-			catch (error)
-			{
-				console.error("Error loading encrypted records:", error);
-				return [];
 			}
 		}
 
@@ -388,21 +314,14 @@
 		{
 			let recordSet;
 
-			if (this.USING_ENCRYPTION)
+			try
 			{
-				recordSet = await this.loadEncryptedRecordSet(firmwareFile);
+				recordSet = await this.loadRecordSet(firmwareFile);
 			}
-			else
+			catch (error)
 			{
-				try
-				{
-					recordSet = await this.loadRecordSet(firmwareFile);
-				}
-				catch (error)
-				{
-					console.error("Error loading record set:", error);
-					return [];
-				}
+				console.error("Error loading record set:", error);
+				return [];
 			}
 
 			const hexSet = [];
