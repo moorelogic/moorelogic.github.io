@@ -10,6 +10,7 @@
     <voice>
         <file>female_voice_evo.xml</file>
         <file>female_voice_luxe.xml</file>
+		<file>luxe_aire_stock_voice.xml</file>
     </voice>
 </config>
 
