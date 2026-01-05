@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <voiceset>
 	<path>voice/LuxeAireStockVoice</path>
-	<phraseCount>90</phraseCount>
+	<phraseCount>91</phraseCount>
 	<phrase>
 		<index>0</index>
 		<desc>adjustable_ramp</desc>
@@ -79,376 +79,381 @@
 	</phrase>
 	<phrase>
 		<index>15</index>
+		<desc>eco_mode</desc>
+		<file>eco_mode.raw</file>
+	</phrase>
+	<phrase>
+		<index>16</index>
 		<desc>eight</desc>
 		<file>eight.raw</file>
 	</phrase>
 	<phrase>
-		<index>16</index>
+		<index>17</index>
 		<desc>eighteen</desc>
 		<file>eighteen.raw</file>
 	</phrase>
 	<phrase>
-		<index>17</index>
+		<index>18</index>
 		<desc>eighty</desc>
 		<file>eighty.raw</file>
 	</phrase>
 	<phrase>
-		<index>18</index>
+		<index>19</index>
 		<desc>eleven</desc>
 		<file>eleven.raw</file>
 	</phrase>
 	<phrase>
-		<index>19</index>
+		<index>20</index>
 		<desc>exit</desc>
 		<file>exit.raw</file>
 	</phrase>
 	<phrase>
-		<index>20</index>
+		<index>21</index>
 		<desc>factory_reset</desc>
 		<file>factory_reset.raw</file>
 	</phrase>
 	<phrase>
-		<index>21</index>
+		<index>22</index>
 		<desc>fifteen</desc>
 		<file>fifteen.raw</file>
 	</phrase>
 	<phrase>
-		<index>22</index>
+		<index>23</index>
 		<desc>fifty</desc>
 		<file>fifty.raw</file>
 	</phrase>
 	<phrase>
-		<index>23</index>
+		<index>24</index>
 		<desc>firing_mode</desc>
 		<file>firing_mode.raw</file>
 	</phrase>
 	<phrase>
-		<index>24</index>
+		<index>25</index>
 		<desc>five</desc>
 		<file>five.raw</file>
 	</phrase>
 	<phrase>
-		<index>25</index>
+		<index>26</index>
 		<desc>forced</desc>
 		<file>forced.raw</file>
 	</phrase>
 	<phrase>
-		<index>26</index>
+		<index>27</index>
 		<desc>forty</desc>
 		<file>forty.raw</file>
 	</phrase>
 	<phrase>
-		<index>27</index>
+		<index>28</index>
 		<desc>four</desc>
 		<file>four.raw</file>
 	</phrase>
 	<phrase>
-		<index>28</index>
+		<index>29</index>
 		<desc>fourteen</desc>
 		<file>fourteen.raw</file>
 	</phrase>
 	<phrase>
-		<index>29</index>
+		<index>30</index>
 		<desc>fsdo</desc>
 		<file>fsdo.raw</file>
 	</phrase>
 	<phrase>
-		<index>30</index>
+		<index>31</index>
 		<desc>fsdo_timer</desc>
 		<file>fsdo_timer.raw</file>
 	</phrase>
 	<phrase>
-		<index>31</index>
+		<index>32</index>
 		<desc>fully_automatic</desc>
 		<file>fully_automatic.raw</file>
 	</phrase>
 	<phrase>
-		<index>32</index>
+		<index>33</index>
 		<desc>game_timer</desc>
 		<file>game_timer.raw</file>
 	</phrase>
 	<phrase>
-		<index>33</index>
+		<index>34</index>
 		<desc>high</desc>
 		<file>high.raw</file>
 	</phrase>
 	<phrase>
-		<index>34</index>
+		<index>35</index>
 		<desc>icpl</desc>
 		<file>icpl.raw</file>
 	</phrase>
 	<phrase>
-		<index>35</index>
+		<index>36</index>
 		<desc>loader_delay</desc>
 		<file>loader_delay.raw</file>
 	</phrase>
 	<phrase>
-		<index>36</index>
+		<index>37</index>
 		<desc>low</desc>
 		<file>low.raw</file>
 	</phrase>
 	<phrase>
-		<index>37</index>
+		<index>38</index>
 		<desc>main_menu</desc>
 		<file>main_menu.raw</file>
 	</phrase>
 	<phrase>
-		<index>38</index>
+		<index>39</index>
 		<desc>medium</desc>
 		<file>medium.raw</file>
 	</phrase>
 	<phrase>
-		<index>39</index>
+		<index>40</index>
 		<desc>milliseconds</desc>
 		<file>milliseconds.raw</file>
 	</phrase>
 	<phrase>
-		<index>40</index>
+		<index>41</index>
 		<desc>minutes</desc>
 		<file>minutes.raw</file>
 	</phrase>
 	<phrase>
-		<index>41</index>
+		<index>42</index>
 		<desc>mode</desc>
 		<file>mode.raw</file>
 	</phrase>
 	<phrase>
-		<index>42</index>
+		<index>43</index>
 		<desc>nine</desc>
 		<file>nine.raw</file>
 	</phrase>
 	<phrase>
-		<index>43</index>
+		<index>44</index>
 		<desc>nineteen</desc>
 		<file>nineteen.raw</file>
 	</phrase>
 	<phrase>
-		<index>44</index>
+		<index>45</index>
 		<desc>ninety</desc>
 		<file>ninety.raw</file>
 	</phrase>
 	<phrase>
-		<index>45</index>
+		<index>46</index>
 		<desc>nxl</desc>
 		<file>nxl.raw</file>
 	</phrase>
 	<phrase>
-		<index>46</index>
+		<index>47</index>
 		<desc>odometer</desc>
 		<file>odometer.raw</file>
 	</phrase>
 	<phrase>
-		<index>47</index>
+		<index>48</index>
 		<desc>off</desc>
 		<file>off.raw</file>
 	</phrase>
 	<phrase>
-		<index>48</index>
+		<index>49</index>
 		<desc>on</desc>
 		<file>on.raw</file>
 	</phrase>
 	<phrase>
-		<index>49</index>
+		<index>50</index>
 		<desc>one</desc>
 		<file>one.raw</file>
 	</phrase>
 	<phrase>
-		<index>50</index>
+		<index>51</index>
 		<desc>one_hundred</desc>
 		<file>one_hundred.raw</file>
 	</phrase>
 	<phrase>
-		<index>51</index>
+		<index>52</index>
 		<desc>percent</desc>
 		<file>percent.raw</file>
 	</phrase>
 	<phrase>
-		<index>52</index>
+		<index>53</index>
 		<desc>point</desc>
 		<file>point.raw</file>
 	</phrase>
 	<phrase>
-		<index>53</index>
+		<index>54</index>
 		<desc>powering_off</desc>
 		<file>powering_off.raw</file>
 	</phrase>
 	<phrase>
-		<index>54</index>
+		<index>55</index>
 		<desc>powering_on</desc>
 		<file>powering_on.raw</file>
 	</phrase>
 	<phrase>
-		<index>55</index>
+		<index>56</index>
 		<desc>programming</desc>
 		<file>programming.raw</file>
 	</phrase>
 	<phrase>
-		<index>56</index>
+		<index>57</index>
 		<desc>seconds</desc>
 		<file>seconds.raw</file>
 	</phrase>
 	<phrase>
-		<index>57</index>
+		<index>58</index>
 		<desc>semi_automatic</desc>
 		<file>semi_automatic.raw</file>
 	</phrase>
 	<phrase>
-		<index>58</index>
+		<index>59</index>
 		<desc>setting</desc>
 		<file>setting.raw</file>
 	</phrase>
 	<phrase>
-		<index>59</index>
+		<index>60</index>
 		<desc>seven</desc>
 		<file>seven.raw</file>
 	</phrase>
 	<phrase>
-		<index>60</index>
+		<index>61</index>
 		<desc>seventeen</desc>
 		<file>seventeen.raw</file>
 	</phrase>
 	<phrase>
-		<index>61</index>
+		<index>62</index>
 		<desc>seventy</desc>
 		<file>seventy.raw</file>
 	</phrase>
 	<phrase>
-		<index>62</index>
+		<index>63</index>
 		<desc>shot_counter</desc>
 		<file>shot_counter.raw</file>
 	</phrase>
 	<phrase>
-		<index>63</index>
+		<index>64</index>
 		<desc>shots_to_enter</desc>
 		<file>shots_to_enter.raw</file>
 	</phrase>
 	<phrase>
-		<index>64</index>
+		<index>65</index>
 		<desc>shots_to_sustain</desc>
 		<file>shots_to_sustain.raw</file>
 	</phrase>
 	<phrase>
-		<index>65</index>
+		<index>66</index>
 		<desc>silent_pause</desc>
 		<file>silent_pause.raw</file>
 	</phrase>
 	<phrase>
-		<index>66</index>
+		<index>67</index>
 		<desc>six</desc>
 		<file>six.raw</file>
 	</phrase>
 	<phrase>
-		<index>67</index>
+		<index>68</index>
 		<desc>sixteen</desc>
 		<file>sixteen.raw</file>
 	</phrase>
 	<phrase>
-		<index>68</index>
+		<index>69</index>
 		<desc>sixty</desc>
 		<file>sixty.raw</file>
 	</phrase>
 	<phrase>
-		<index>69</index>
+		<index>70</index>
 		<desc>software_version</desc>
 		<file>software_version.raw</file>
 	</phrase>
 	<phrase>
-		<index>70</index>
+		<index>71</index>
 		<desc>solenoid_circuit_fault</desc>
 		<file>solenoid_circuit_fault.raw</file>
 	</phrase>
 	<phrase>
-		<index>71</index>
+		<index>72</index>
 		<desc>speaker_volume</desc>
 		<file>speaker_volume.raw</file>
 	</phrase>
 	<phrase>
-		<index>72</index>
+		<index>73</index>
 		<desc>ten</desc>
 		<file>ten.raw</file>
 	</phrase>
 	<phrase>
-		<index>73</index>
+		<index>74</index>
 		<desc>thirteen</desc>
 		<file>thirteen.raw</file>
 	</phrase>
 	<phrase>
-		<index>74</index>
+		<index>75</index>
 		<desc>thirty</desc>
 		<file>thirty.raw</file>
 	</phrase>
 	<phrase>
-		<index>75</index>
+		<index>76</index>
 		<desc>three</desc>
 		<file>three.raw</file>
 	</phrase>
 	<phrase>
-		<index>76</index>
+		<index>77</index>
 		<desc>toggle</desc>
 		<file>toggle.raw</file>
 	</phrase>
 	<phrase>
-		<index>77</index>
+		<index>78</index>
 		<desc>tournament_lock</desc>
 		<file>tournament_lock.raw</file>
 	</phrase>
 	<phrase>
-		<index>78</index>
+		<index>79</index>
 		<desc>trigger_debounce</desc>
 		<file>trigger_debounce.raw</file>
 	</phrase>
 	<phrase>
-		<index>79</index>
+		<index>80</index>
 		<desc>twelve</desc>
 		<file>twelve.raw</file>
 	</phrase>
 	<phrase>
-		<index>80</index>
+		<index>81</index>
 		<desc>twenty</desc>
 		<file>twenty.raw</file>
 	</phrase>
 	<phrase>
-		<index>81</index>
+		<index>82</index>
 		<desc>two</desc>
 		<file>two.raw</file>
 	</phrase>
 	<phrase>
-		<index>82</index>
+		<index>83</index>
 		<desc>vision</desc>
 		<file>vision.raw</file>
 	</phrase>
 	<phrase>
-		<index>83</index>
+		<index>84</index>
 		<desc>voice_select</desc>
 		<file>voice_select.raw</file>
 	</phrase>
 	<phrase>
-		<index>84</index>
+		<index>85</index>
 		<desc>welcome</desc>
 		<file>welcome.raw</file>
 	</phrase>
 	<phrase>
-		<index>85</index>
+		<index>86</index>
 		<desc>zero</desc>
 		<file>zero.raw</file>
 	</phrase>
 	<phrase>
-		<index>86</index>
+		<index>87</index>
 		<desc>zero_point_five_zero</desc>
 		<file>zero_point_five_zero.raw</file>
 	</phrase>
 	<phrase>
-		<index>87</index>
+		<index>88</index>
 		<desc>zero_point_seven_five</desc>
 		<file>zero_point_seven_five.raw</file>
 	</phrase>
 	<phrase>
-		<index>88</index>
+		<index>89</index>
 		<desc>zero_point_two_five</desc>
 		<file>zero_point_two_five.raw</file>
 	</phrase>
 	<phrase>
-		<index>89</index>
+		<index>90</index>
 		<desc>zero_point_zero_zero</desc>
 		<file>zero_point_zero_zero.raw</file>
 	</phrase>
