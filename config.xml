@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <firmware>
-        <file>Evo_109_Saber_Tactical.hex</file>
-        <file>Evo_109_team_centercut.hex</file>
-        <file>Evo_109_utah_airguns.hex</file>
-        <file>Luxe717_115_English.hex</file>
-		<file>Luxe817_114_Test.hex</file>
+		<file>Luxe817_120.hex</file>
+		<file>Luxe817_120_German.hex</file>
     </firmware>
     <voice>
-        <file>female_voice_evo.xml</file>
-        <file>female_voice_luxe.xml</file>
 		<file>luxe_aire_stock_voice.xml</file>
     </voice>
 </config>
