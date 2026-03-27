@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <firmware>
-		<file>Luxe817_120.hex</file>
-		<file>Luxe817_120_German.hex</file>
+		<file>Luxe817_129.hex</file>
+		<file>Luxe817_129_German.hex</file>
+		<file>Luxe817_129_Burst_2.hex</file>
+		<file>Luxe817_129_Burst_2_German.hex</file>
     </firmware>
     <voice>
 		<file>luxe_aire_stock_voice.xml</file>
